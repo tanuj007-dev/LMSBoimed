@@ -10,7 +10,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
+    <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm transition-all duration-300">
       <div className="max-w-[1400px] mx-auto px-4 md:px-8">
         <div className="flex items-center justify-between h-20">
 
@@ -30,11 +30,11 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center space-x-8">
             {[
               { name: "Home", href: "/", active: true },
-              { name: "Clinical Research", href: "#" },
-              { name: "Corporate Training", href: "#" },
+              { name: "Clinical Research", href: "/clinical-research" },
+              { name: "Corporate Training", href: "/corporate-training" },
               { name: "Courses", href: "#" },
-              { name: "News", href: "#" },
-              { name: "Contact", href: "#" },
+              { name: "Blog", href: "/blogs" },
+              { name: "Contact", href: "/contact" },
             ].map((link) => (
               <Link
                 key={link.name}
@@ -75,25 +75,25 @@ export default function Navbar() {
 
       {/* Mobile Navigation Menu */}
       <div
-        className={`lg:hidden absolute top-20 left-0 w-full bg-white border-b border-gray-100 shadow-lg transition-all duration-300 ease-in-out origin-top ${isOpen ? "opacity-100 scale-y-100 visible" : "opacity-0 scale-y-95 invisible"
+        className={`lg:hidden absolute top-20 left-0 w-full bg-white/95 backdrop-blur-lg border-b border-gray-200/50 shadow-lg transition-all duration-300 ease-in-out origin-top ${isOpen ? "opacity-100 scale-y-100 visible" : "opacity-0 scale-y-95 invisible"
           }`}
       >
         <div className="flex flex-col p-4 space-y-4">
           {[
-            "Home",
-            "Clinical Research",
-            "Corporate Training",
-            "Courses",
-            "News",
-            "Contact",
+            { name: "Home", href: "/" },
+            { name: "Clinical Research", href: "/clinical-research" },
+            { name: "Corporate Training", href: "/corporate-training" },
+            { name: "Courses", href: "#" },
+            { name: "Blog", href: "/blogs" },
+            { name: "Contact", href: "/contact" },
           ].map((item) => (
             <Link
-              key={item}
-              href="#"
+              key={item.name}
+              href={item.href}
               className="text-gray-600 hover:text-[#0088ff] hover:bg-gray-50 px-4 py-2 rounded-lg font-medium transition-colors text-[15px]"
               onClick={() => setIsOpen(false)}
             >
-              {item}
+              {item.name}
             </Link>
           ))}
           <div className="border-t border-gray-100 my-2 pt-2 space-y-3">

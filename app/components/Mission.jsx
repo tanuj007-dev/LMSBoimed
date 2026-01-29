@@ -1,27 +1,36 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
-import about1 from "./assets/about1.png"; // Using about1 as it fits the interaction theme
+import { motion } from "framer-motion";
+import missionImg from "./assets/82bfc7143601dc7636262c1f67ce6f7371ba82cb.jpg";
 
 export default function Mission() {
     return (
-        <section className="relative w-full py-20 lg:py-32 bg-white overflow-hidden">
+        <section className="relative w-full py-12 lg:py-20 bg-white overflow-hidden">
             <div className="max-w-[1400px] mx-auto px-4 md:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 
                     {/* Left Column: Text Content */}
-                    <div className="flex flex-col items-start text-left order-2 lg:order-1">
+                    <motion.div 
+                        initial={{ opacity: 0, x: -50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="flex flex-col items-start text-left order-2 lg:order-1"
+                    >
                         {/* Tag/Badge */}
-                        <span className="inline-block px-8 py-2.5 rounded-full border border-blue-300 text-[#0088ff] text-sm font-medium tracking-wide bg-white mb-8">
+                        <span className="inline-block px-6 py-2 rounded-full border border-blue-300 text-[#0088ff] text-xs font-medium tracking-wide bg-white mb-6">
                             About Us
                         </span>
 
                         {/* Heading */}
-                        <h2 className="text-4xl md:text-6xl font-playfair text-[#1a2b4b] font-bold leading-tight mb-8">
+                        <h2 className="text-4xl md:text-[60px] font-playfair text-[#1a2b4b] font-bold leading-tight mb-6">
                             Our Mission
                         </h2>
 
                         {/* Content */}
-                        <div className="space-y-6 text-gray-600 text-[15px] md:text-base leading-relaxed max-w-xl">
+                        <div className="space-y-4 text-gray-600 text-[16px] leading-relaxed max-w-xl">
                             <p>
                                 To enhance the participants' skills and self-confidence to deliver
                                 high-quality healthcare services to our communities.
@@ -33,30 +42,42 @@ export default function Mission() {
                                 meaningful job and attaining career success
                             </p>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Right Column: Image with Overlay */}
-                    <div className="relative order-1 lg:order-2">
-                        <div className="relative w-full aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl">
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="relative order-1 lg:order-2"
+                    >
+                        <div className="relative w-full aspect-16/10 lg:aspect-[16/9] rounded-4xl overflow-hidden shadow-2xl">
                             <Image
-                                src={about1}
+                                src={missionImg}
                                 alt="Medical Professionals Discussion"
                                 fill
                                 className="object-cover"
                                 sizes="(max-width: 768px) 100vw, 50vw"
                             />
 
-                            {/* Overlay Card */}
-                            <div className="absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10 bg-[#2a3b5f]/90 backdrop-blur-md p-6 md:p-8 rounded-3xl text-white">
-                                <h3 className="text-xl md:text-2xl font-semibold mb-2">
+                            {/* Overlay Card - Transparent Custom Color */}
+                            <motion.div 
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, delay: 0.4 }}
+                                className="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 bg-[#020043B2] backdrop-blur-lg p-4 md:p-6 rounded-2xl text-white border border-white/10 shadow-2xl"
+                            >
+                                <h3 className="text-lg md:text-xl font-semibold mb-1">
                                     Our mission is simple
                                 </h3>
-                                <p className="text-blue-100 text-sm md:text-base font-light leading-relaxed">
+                                <p className="text-white/90 text-xs md:text-sm font-light leading-relaxed">
                                     Building confident professionals through training that elevates community care.
                                 </p>
-                            </div>
+                            </motion.div>
                         </div>
-                    </div>
+                    </motion.div>
 
                 </div>
             </div>
