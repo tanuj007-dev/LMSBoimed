@@ -84,7 +84,7 @@ const ContactPage = () => {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-6xl lg:text-7xl font-playfair font-bold mb-6 tracking-tight"
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-playfair font-bold mb-6 tracking-tight"
             >
               Contact us
             </motion.h1>
@@ -109,7 +109,7 @@ const ContactPage = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <form className="bg-white rounded-[40px] p-8 md:p-10 shadow-[0_40px_100px_-20px_rgba(0,136,255,0.08)] border border-gray-100 relative z-10 h-full flex flex-col justify-between group/form">
+              <form className="bg-white rounded-[32px] md:rounded-[40px] p-6 sm:p-8 md:p-10 shadow-[0_40px_100px_-20px_rgba(0,136,255,0.08)] border border-gray-100 relative z-10 h-full flex flex-col justify-between group/form">
                 <div className="mb-8">
                   <h2 className="text-2xl md:text-3xl font-playfair font-black text-[#1a2b4b]">Get In Touch</h2>
                
@@ -240,7 +240,7 @@ const ContactPage = () => {
                     <textarea 
                       rows={5}
                       placeholder="How can we help?"
-                      className="w-full bg-white border border-gray-300 rounded-[24px] px-6 py-10 focus:border-gray-400 outline-none resize-none transition-all text-[15px] font-medium placeholder:text-gray-400"
+                      className="w-full bg-white border border-gray-300 rounded-[24px] px-6 py-6 md:py-10 focus:border-gray-400 outline-none resize-none transition-all text-[15px] font-medium placeholder:text-gray-400"
                     />
  
                   </div>
@@ -270,14 +270,14 @@ const ContactPage = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <div className="bg-white rounded-[40px] p-6 md:p-8 border border-gray-100 relative overflow-hidden h-full flex flex-col gap-8 shadow-[0_40px_100px_-20px_rgba(0,136,255,0.05)]">
+              <div className="bg-white rounded-[32px] md:rounded-[40px] p-6 md:p-8 border border-gray-100 relative overflow-hidden h-full flex flex-col gap-8 shadow-[0_40px_100px_-20px_rgba(0,136,255,0.05)]">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50/50 rounded-full -mr-12 -mt-12 blur-2xl" />
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-8 relative z-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-8 relative z-10">
                   <div className="space-y-6">
                     <div className="space-y-2">
                       <span className="text-[10px] font-extrabold tracking-[0.15em] uppercase text-[#0088ff]">Address</span>
-                      <p className="text-[14px] font-bold leading-relaxed text-[#1a2b4b]">
+                      <p className="text-[13px] sm:text-[14px] font-bold leading-relaxed text-[#1a2b4b]">
                         123 Clinical Plaza, Suite #101,<br />
                         Toronto, ON M5V 2H1, Canada
                       </p>
@@ -303,10 +303,10 @@ const ContactPage = () => {
                     <div className="space-y-2">
                       <span className="text-[10px] font-extrabold tracking-[0.15em] uppercase text-[#0088ff]">Direct Contact</span>
                       <div className="space-y-1">
-                        <p className="text-base md:text-[14px] font-bold text-[#1a2b4b] hover:text-[#0088ff] transition-colors cursor-pointer block wrap-break-word">
+                        <p className="text-[13px] sm:text-[14px] font-bold text-[#1a2b4b] hover:text-[#0088ff] transition-colors cursor-pointer block wrap-break-word">
                           info@biomedcanada.com
                         </p>
-                        <p className="text-base md:text-[14px] font-bold text-[#1a2b4b] hover:text-[#0088ff] transition-colors cursor-pointer block">
+                        <p className="text-[13px] sm:text-[14px] font-bold text-[#1a2b4b] hover:text-[#0088ff] transition-colors cursor-pointer block">
                           +1 647 123 4567
                         </p>
                       </div>
@@ -315,15 +315,15 @@ const ContactPage = () => {
                     <div className="space-y-2">
                       <span className="text-[10px] font-extrabold tracking-[0.15em] uppercase text-[#0088ff]">Working Hours</span>
                       <div className="space-y-1">
-                        <p className="text-[13px] font-bold text-[#1a2b4b]">Mon - Fri: 09:00 AM - 06:00 PM</p>
-                        <p className="text-[13px] font-bold text-[#1a2b4b]">Sat - Sun: Emergency Only</p>
+                        <p className="text-[12px] sm:text-[13px] font-bold text-[#1a2b4b]">Mon - Fri: 09:00 AM - 06:00 PM</p>
+                        <p className="text-[12px] sm:text-[13px] font-bold text-[#1a2b4b]">Sat - Sun: Emergency Only</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* --- INTEGRATED MAP --- */}
-                <div className="relative mt-auto rounded-[24px] overflow-hidden min-h-[400px] border border-gray-100 group">
+                <div className="relative mt-auto rounded-[24px] overflow-hidden min-h-[300px] md:min-h-[400px] border border-gray-100 group">
                   <iframe 
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2886.436486443758!2d-79.3831842!3d43.653226!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89d4cb2ce09de99d%3A0x8071590fc6cf680!2sToronto%2C%20ON!5e0!3m2!1sen!2sca!4v1625500000000!5m2!1sen!2sca" 
                     width="100%" 
@@ -331,7 +331,7 @@ const ContactPage = () => {
                     style={{ border: 0 }} 
                     allowFullScreen="" 
                     loading="lazy"
-                    className="  transition-all duration-1000 min-h-[300px]"
+                    className="absolute inset-0 transition-all duration-1000"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-white/20 to-transparent pointer-events-none" />
                   
@@ -341,12 +341,12 @@ const ContactPage = () => {
           </div>
 
           {/* --- TRUST FACTOR MARQUEE --- */}
-          <div className="py-12 border-y border-gray-100 overflow-hidden relative group">
-            <div className="absolute inset-y-0 left-0 w-32 bg-linear-to-r from-[#fcfdfa] to-transparent z-10" />
-            <div className="absolute inset-y-0 right-0 w-32 bg-linear-to-l from-[#fcfdfa] to-transparent z-10" />
+          <div className="py-8 md:py-12 border-y border-gray-100 overflow-hidden relative group">
+            <div className="absolute inset-y-0 left-0 w-16 md:w-32 bg-linear-to-r from-[#fcfdfa] to-transparent z-10" />
+            <div className="absolute inset-y-0 right-0 w-16 md:w-32 bg-linear-to-l from-[#fcfdfa] to-transparent z-10" />
             
             <motion.div 
-              className="flex whitespace-nowrap gap-16 items-center"
+              className="flex whitespace-nowrap gap-12 md:gap-16 items-center"
               animate={{ x: ["0%", "-50%"] }}
               transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
             >
@@ -356,9 +356,9 @@ const ContactPage = () => {
                 "Health Canada Approved", "ISO 9001:2015", "GCP Certified", "FDA Compliant", 
                 "SOC2 Type II", "Biotech Excellence Award", "Global Clinical Partner"
               ].map((text, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <div className="w-2 h-2 rounded-full bg-[#0088ff]" />
-                  <span className="text-xl md:text-2xl font-playfair font-black text-[#1a2b4b] uppercase tracking-widest group-hover:text-[#1a2b4b] transition-colors duration-700">{text}</span>
+                <div key={i} className="flex items-center gap-3 md:gap-4">
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#0088ff]" />
+                  <span className="text-lg md:text-2xl font-playfair font-black text-[#1a2b4b] uppercase tracking-widest group-hover:text-[#1a2b4b] transition-colors duration-700">{text}</span>
                 </div>
               ))}
             </motion.div>
@@ -378,7 +378,7 @@ const ContactPage = () => {
             {/* Left Content - High Visibility & Premium Typography */}
             <motion.div 
               {...fadeUp} 
-              className="text-[#1a2b4b] space-y-8 pb-16 md:pb-28"
+              className="text-[#1a2b4b] space-y-8 pb-10 sm:pb-16 md:pb-28"
             >
               <div className="space-y-4">
                 <motion.div 
@@ -390,7 +390,7 @@ const ContactPage = () => {
                   <span className="text-[#0088ff] font-bold text-[11px] uppercase tracking-[0.3em]">Newsletter</span>
                 </motion.div>
                 
-                <h2 className="text-4xl md:text-6xl font-playfair font-black leading-[1.1] tracking-tight text-[#1a2b4b]">
+                <h2 className="text-3xl sm:text-4xl md:text-6xl font-playfair font-black leading-[1.1] tracking-tight text-[#1a2b4b]">
                   Get expert tips & <br /> 
                   <span className="relative">
                     <span className="relative z-10 text-[#0088ff]">clinical insights</span>
@@ -412,14 +412,16 @@ const ContactPage = () => {
               {/* Premium Mailbar */}
               <div className="relative max-w-lg group">
                 <div className="absolute -inset-1 bg-linear-to-r from-[#0088ff] to-[#00aaff] rounded-full blur opacity-10 group-focus-within:opacity-20 transition duration-500" />
-                <div className="relative flex items-center bg-white border border-blue-100/60 rounded-full p-2 focus-within:border-[#0088ff]/40 focus-within:ring-8 focus-within:ring-[#0088ff]/5 transition-all shadow-xl">
-                  <Mail className="ml-4 text-blue-200 w-5 h-5" />
-                  <input 
-                    type="email" 
-                    placeholder="Professional email address"
-                    className="flex-1 bg-transparent pl-3 pr-4 py-3 text-[#1a2b4b] placeholder:text-gray-300 outline-none text-sm font-medium"
-                  />
-                  <button className="bg-[#1a2b4b] text-white px-10 py-3.5 rounded-full font-black hover:bg-[#0088ff] transition-all duration-500 shadow-2xl text-sm whitespace-nowrap active:scale-95">
+                <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center bg-white border border-blue-100/60 rounded-[24px] sm:rounded-full p-2 focus-within:border-[#0088ff]/40 focus-within:ring-8 focus-within:ring-[#0088ff]/5 transition-all shadow-xl">
+                  <div className="flex items-center flex-1 min-w-0">
+                    <Mail className="ml-4 text-blue-200 w-5 h-5 shrink-0" />
+                    <input 
+                      type="email" 
+                      placeholder="Professional email address"
+                      className="w-full bg-transparent pl-3 pr-4 py-3 text-[#1a2b4b] placeholder:text-gray-300 outline-none text-sm font-medium"
+                    />
+                  </div>
+                  <button className="bg-[#1a2b4b] text-white px-8 sm:px-10 py-3.5 rounded-full font-black hover:bg-[#0088ff] transition-all duration-500 shadow-2xl text-sm whitespace-nowrap active:scale-95 mt-2 sm:mt-0">
                     Subscribe Now
                   </button>
                 </div>
