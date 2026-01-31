@@ -1,10 +1,11 @@
 "use client";
 
+import React, { useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Maximize2 } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Import Swiper styles
 import "swiper/css";
@@ -27,6 +28,18 @@ const galleryItems = [
 ];
 
 export default function ClinicalResearchGallery() {
+  const [selectedIndex, setSelectedIndex] = useState(null);
+
+  const nextImage = (e) => {
+    e.stopPropagation();
+    setSelectedIndex((prev) => (prev + 1) % galleryItems.length);
+  };
+
+  const prevImage = (e) => {
+    e.stopPropagation();
+    setSelectedIndex((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
+  };
+
   return (
     <section className="w-full bg-white py-12 md:py-16 lg:py-20 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,7 +60,7 @@ export default function ClinicalResearchGallery() {
             <h2 className="text-3xl sm:text-[60px] font-bold text-[#1a2b4b] mb-3">
               Sites &amp; <span className="text-[#0088ff]">Facilities</span>
             </h2>
-            <p className="text-gray-600 text-sm sm:text-base max-w-3xl">
+            <p className="text-gray-600 text-sm sm:text-base max-w-3xl leading-relaxed">
               As a medical and site network organization, our facilities in
               association with private outpatient clinics are fully equipped to be
               qualified to conduct the studies and to provide high-quality services.
@@ -60,7 +73,7 @@ export default function ClinicalResearchGallery() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative group"
+          className="relative group/gallery"
         >
           {/* Navigation Buttons - Positioned Left & Right */}
           <button
@@ -99,21 +112,27 @@ export default function ClinicalResearchGallery() {
           >
             {galleryItems.map((image, index) => (
               <SwiperSlide key={index}>
-                <div className="relative w-full h-[300px] sm:h-[350px] lg:h-[400px] rounded-[24px] overflow-hidden shadow-lg border border-gray-100 transform transition-transform duration-500 hover:scale-[1.02]">
+                <div 
+                  onClick={() => setSelectedIndex(index)}
+                  className="relative w-full h-[300px] sm:h-[350px] lg:h-[400px] rounded-[24px] overflow-hidden shadow-lg border border-gray-100 group/slide cursor-pointer transform transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
+                >
                   <Image
                     src={image}
                     alt={`Clinical facility ${index + 1}`}
                     fill
-                    className="object-cover"
+                    className="object-cover transition-transform duration-700 group-hover/slide:scale-110"
                   />
-                  {/* Subtle overlay on hover */}
-                  <div className="absolute inset-0 bg-black/0 group-hover/slide:bg-black/5 transition-colors" />
+                  {/* Overlay on hover */}
+                 
                 </div>
               </SwiperSlide>
             ))}
           </Swiper>
         </motion.div>
       </div>
+
+      
     </section>
   );
 }
+ 

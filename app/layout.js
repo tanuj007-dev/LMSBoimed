@@ -1,5 +1,4 @@
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import ConditionalLayout from "./components/ConditionalLayout";
 import { Playfair_Display, Poppins } from "next/font/google";
 import "./globals.css";
 
@@ -21,13 +20,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${playfair.variable} ${poppins.variable} antialiased`}
+        suppressHydrationWarning
       >
-        <Navbar />
-        {children}
-        <Footer />
+        <ConditionalLayout>{children}</ConditionalLayout>
       </body>
     </html>
   );

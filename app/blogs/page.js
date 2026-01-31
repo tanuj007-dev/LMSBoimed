@@ -1,12 +1,15 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Calendar, Clock, Search, ArrowRight } from "lucide-react";
 
-import heroImage from "../components/assets/hero.png";
-import { featuredPosts, latestPosts, allPosts } from "./blogData";
+import heroImage from "../components/assets/blog_hero_background_1769843311870.png";
+import about1 from "../components/assets/about1.png";
+import about2 from "../components/assets/about2.png";
+import about3 from "../components/assets/about3.png";
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -14,27 +17,109 @@ const fadeUp = {
 };
 
 export default function BlogPage() {
-  const heroPrimary = featuredPosts[0];
-  const heroSecondary = featuredPosts.slice(1, 4);
-  const stories = allPosts;
+  const [allPosts, setAllPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Fallback images for when API doesn't provide images
+  const fallbackImages = [about1, about2, about3];
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch('http://localhost:5000/api/v1/blogs', {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch blogs: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Blogs API Response:', data);
+
+        // Ensure we have an array to work with
+        let blogsArray = [];
+        if (Array.isArray(data)) {
+          blogsArray = data;
+        } else if (data && Array.isArray(data.blogs)) {
+          blogsArray = data.blogs;
+        } else if (data && Array.isArray(data.data)) {
+          blogsArray = data.data;
+        } else {
+          throw new Error('Invalid API response format - expected an array of blogs');
+        }
+
+        // Map API data to component format
+        const mappedBlogs = blogsArray.map((blog, index) => {
+          const authorInfo = blog.User || blog.author || {};
+          const authorName = typeof authorInfo === 'string' 
+            ? authorInfo 
+            : (authorInfo.first_name ? `${authorInfo.first_name} ${authorInfo.last_name || ''}` : 'BioMed Canada');
+
+          return {
+            slug: blog.slug || blog._id || blog.id || `blog-${index}`,
+            title: blog.title || 'Untitled Post',
+            excerpt: blog.excerpt || blog.short_description || blog.description || blog.summary || '',
+            content: blog.content || blog.body || '',
+            category: blog.category || blog.category_name || 'General',
+            date: blog.date || blog.publishedDate || blog.createdAt || new Date().toLocaleDateString(),
+            readTime: blog.readTime || blog.readingTime || '5 min read',
+            image: blog.thumbnail_url || blog.image || blog.thumbnail || blog.coverImage || fallbackImages[index % fallbackImages.length],
+            author: authorName,
+            authorImage: authorInfo.profile_image_url || null,
+            authorRole: authorInfo.title || blog.authorRole || blog.authorTitle || 'Author'
+          };
+        });
+
+        setAllPosts(mappedBlogs);
+      } catch (err) {
+        console.error('Error fetching blogs:', err);
+        setError(err.message);
+        setAllPosts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+  // Filter posts based on search query
+  const filteredPosts = allPosts.filter(post => 
+    post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    post.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const heroPrimary = filteredPosts[0] || {};
+  const heroSecondary = filteredPosts.slice(1, 4);
+  const stories = filteredPosts;
 
   return (
     <main className="bg-slate-50 text-slate-900 min-h-screen pb-20">
       {/* Blog Banner */}
-      <section className="relative h-[300px] md:h-[450px] w-full overflow-hidden">
+      <section className="relative h-[350px] md:h-[450px] w-full overflow-hidden">
         <Image
           src={heroImage}
           alt="Blog Banner"
           fill
-          className="object-cover brightness-[0.6]"
+          className="object-cover bg-bottom brightness-[0.5] md:brightness-[0.6]"
           priority
         />
-        <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 to-transparent" />
+        <div className="absolute inset-0 bg-slate-900/40 md:bg-transparent md:bg-linear-to-t md:from-slate-900/40 md:to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/20 to-black/60 md:hidden" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 max-w-5xl mx-auto">
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-blue-400 font-semibold tracking-wider uppercase text-sm mb-4"
+            className="font-poppins text-blue-400 font-extrabold tracking-[0.3em] text-[10px] md:text-xs uppercase mb-4"
           >
             Our Blog & Insights
           </motion.span>
@@ -42,15 +127,15 @@ export default function BlogPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
+            className="text-4xl md:text-6xl lg:text-7xl font-playfair font-black text-white mb-6 leading-[1.1] tracking-tight drop-shadow-2xl"
           >
-            Insights & Innovation in <br className="hidden md:block" /> Clinical Research
+            Insights & Innovation in <br className="hidden md:block" /> <span className="text-blue-400">Clinical Research</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-white/80 max-w-2xl font-light"
+            className="font-poppins text-lg md:text-xl text-white/90 max-w-2xl font-light leading-relaxed"
           >
             Stay updated with the latest breakthroughs, regulatory updates, and expert perspectives in the biotech industry.
           </motion.p>
@@ -72,19 +157,53 @@ export default function BlogPage() {
               <input
                 type="text"
                 placeholder="Search articles..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full md:w-110 rounded-2xl border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400"
               />
             </div>
           </div>
 
+          {/* Loading State */}
+          {loading && (
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0088ff]"></div>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !loading && (
+            <div className="text-center py-10">
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-6 max-w-md mx-auto">
+                <p className="text-red-600 font-semibold mb-2">Failed to load blogs</p>
+                <p className="text-gray-600 text-sm">{error}</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="mt-4 px-4 py-2 bg-[#0088ff] text-white rounded-full text-sm font-semibold hover:bg-[#0077ee] transition-colors"
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* No Results State */}
+          {!loading && !error && filteredPosts.length === 0 && (
+            <div className="text-center py-20">
+              <p className="text-gray-500 text-lg">No blogs found matching your search.</p>
+            </div>
+          )}
+
           {/* Featured Posts Grid */}
-          <motion.div
-            className="grid gap-8 lg:grid-cols-[1.8fr_1fr]"
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ staggerChildren: 0.1 }}
-          >
+          {!loading && !error && filteredPosts.length > 0 && heroPrimary && (
+          <>
+            <motion.div
+              className="grid gap-8 lg:grid-cols-[1.8fr_1fr]"
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ staggerChildren: 0.1 }}
+            >
             {/* Main Featured Post */}
             <Link href={`/blogs/${heroPrimary.slug}`}>
               <motion.article
@@ -97,6 +216,7 @@ export default function BlogPage() {
                     alt={heroPrimary.title}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    unoptimized={typeof heroPrimary.image === 'string'}
                     priority
                   />
                   <div className="absolute top-6 left-6">
@@ -138,6 +258,7 @@ export default function BlogPage() {
                         alt={post.title}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        unoptimized={typeof post.image === 'string'}
                       />
                     </div>
                     <div className="space-y-2">
@@ -196,6 +317,7 @@ export default function BlogPage() {
                       alt={post.title}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      unoptimized={typeof post.image === 'string'}
                     />
                     <div className="absolute bottom-4 left-4">
                       <span className="bg-white/90 backdrop-blur-sm text-slate-900 text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm uppercase tracking-wide">
@@ -212,12 +334,16 @@ export default function BlogPage() {
                       {post.title}
                     </h3>
                     <p className="text-slate-500 text-sm line-clamp-3 leading-relaxed">
-                      {heroPrimary.excerpt}
+                      {post.excerpt}
                     </p>
                     <div className="pt-4 mt-auto flex items-center justify-between border-t border-slate-50">
                       <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-blue-600">
-                          {post.author.split(' ').map(n => n[0]).join('')}
+                        <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-blue-600 overflow-hidden border border-slate-200">
+                          {post.authorImage ? (
+                            <img src={post.authorImage} alt={post.author} className="h-full w-full object-cover" />
+                          ) : (
+                            post.author.split(' ').map(n => n[0]).join('')
+                          )}
                         </div>
                         <span className="text-xs font-semibold text-slate-700">{post.author}</span>
                       </div>
@@ -227,8 +353,12 @@ export default function BlogPage() {
                 </motion.article>
               </Link>
             ))}
-          </motion.div>
+            </motion.div>
+          </>
+          )}
 
+          {/* Pagination */}
+          {!loading && !error && filteredPosts.length > 0 && (
           <div className="mt-16 flex flex-col items-center gap-6">
             <button
               type="button"
@@ -236,8 +366,12 @@ export default function BlogPage() {
             >
               Load more articles
             </button>
-            <p className="text-slate-400 text-xs font-medium">Showing 6 of 24 articles</p>
+            <p className="text-slate-400 text-xs font-medium">
+              Showing {filteredPosts.length} article{filteredPosts.length !== 1 ? 's' : ''}
+              {searchQuery && ` matching "${searchQuery}"`}
+            </p>
           </div>
+          )}
         </div>
       </section>
     </main>

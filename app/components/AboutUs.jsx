@@ -41,7 +41,7 @@ export default function AboutUs() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="relative w-full aspect-square max-w-[550px] mx-auto flex flex-col justify-center px-6"
+                        className="relative w-full aspect-square max-w-[550px] mx-auto flex flex-col justify-center px-8 sm:px-6 mb-12 lg:mb-0"
                     >
                         {/* Main Big Image (Building) */}
                         <div className="relative w-full h-[85%] z-10">

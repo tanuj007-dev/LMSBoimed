@@ -8,11 +8,10 @@ import Topbar from "./Topbar";
 function AdminShellInner({ children }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const { isDark } = useTheme();
 
   return (
-    <div className={isDark ? "dark" : ""}>
-      <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors duration-200 dark:bg-slate-950 dark:text-slate-100">
+    <div>
+      <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors duration-200">
         <div className="relative flex">
           <Sidebar
             collapsed={isCollapsed}

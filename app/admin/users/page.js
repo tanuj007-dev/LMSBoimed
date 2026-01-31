@@ -1,190 +1,191 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Edit3, Trash2 } from "lucide-react";
-import { usersSeed } from "../data";
-
-const roles = ["Admin", "Editor"];
-const statuses = ["Active", "Pending", "Suspended"];
+import { Edit3, Trash2, UserPlus, Search, Loader2 } from "lucide-react";
+import Link from "next/link";
 
 export default function UsersPage() {
-  const [users, setUsers] = useState(usersSeed);
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
+  const [search, setSearch] = useState("");
 
-  const handleDelete = (id) => {
-    setUsers((prev) => prev.filter((user) => user.id !== id));
+  const fetchUsers = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await fetch("http://localhost:5000/api/v1/users");
+      if (!response.ok) throw new Error("Failed to fetch users");
+      const data = await response.json();
+      setUsers(data.data || []);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    
+    try {
+      const response = await fetch(`http://localhost:5000/api/v1/users/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete user");
+      setUsers((prev) => prev.filter((user) => user.id !== id));
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
-  const handleSave = () => {
-    setUsers((prev) =>
-      prev.map((user) => (user.id === editingUser.id ? editingUser : user))
-    );
-    setEditingUser(null);
-  };
+  const filteredUsers = users.filter(user => 
+    `${user.first_name} ${user.last_name}`.toLowerCase().includes(search.toLowerCase()) ||
+    user.email.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-          People
-        </p>
-        <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">
-          Users
-        </h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-400 font-bold">
+            People
+          </p>
+          <h2 className="text-2xl font-bold text-slate-900 ">
+            User Management
+          </h2>
+        </div>
+        <Link
+          href="/admin/users/add"
+          className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-bold text-white shadow-lg transition hover:bg-slate-800 active:scale-95"
+        >
+          <UserPlus className="h-4 w-4" />
+          Add New User
+        </Link>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <table className="min-w-full text-sm">
-          <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-400 dark:bg-slate-950">
-            <tr>
-              <th className="px-6 py-3">Avatar</th>
-              <th className="px-6 py-3">Name</th>
-              <th className="px-6 py-3">Email</th>
-              <th className="px-6 py-3">Role</th>
-              <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr
-                key={user.id}
-                className="border-t border-slate-100 text-slate-700 dark:border-slate-800 dark:text-slate-200"
-              >
-                <td className="px-6 py-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-200">
-                    {user.name.charAt(0)}
-                  </div>
-                </td>
-                <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">
-                  {user.name}
-                </td>
-                <td className="px-6 py-4">{user.email}</td>
-                <td className="px-6 py-4">{user.role}</td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                      user.status === "Active"
-                        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200"
-                        : user.status === "Pending"
-                        ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200"
-                        : "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200"
-                    }`}
-                  >
-                    {user.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setEditingUser(user)}
-                      className="rounded-lg border border-slate-200 p-2 text-slate-600 transition hover:bg-slate-100 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800"
-                    >
-                      <Edit3 className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(user.id)}
-                      className="rounded-lg border border-slate-200 p-2 text-rose-500 transition hover:bg-rose-50 dark:border-slate-800 dark:text-rose-300 dark:hover:bg-rose-950/40"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </td>
+      <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex flex-1 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+          <Search className="h-4 w-4" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-transparent focus:outline-none"
+            placeholder="Search by name or email..."
+          />
+        </div>
+      </div>
+
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm  ">
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm">
+            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-400 font-bold">
+              <tr>
+                <th className="px-6 py-4">User</th>
+                <th className="px-6 py-4">Role</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Joined</th>
+                <th className="px-6 py-4">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+                      <p className="text-slate-500 font-medium">Fetching secure records...</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-rose-500 font-medium">
+                    {error}
+                  </td>
+                </tr>
+              ) : filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-400 italic">
+                    No matching users found.
+                  </td>
+                </tr>
+              ) : (
+                filteredUsers.map((user) => (
+                  <tr
+                    key={user.id}
+                    className="group hover:bg-slate-50/50 transition-colors"
+                  >
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-50 overflow-hidden border border-indigo-100 uppercase">
+                        {user.profile_image_url ? (
+                          <img src={user.profile_image_url} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <span className="text-sm font-bold text-indigo-600">
+                            {user.first_name?.charAt(0) || user.email?.charAt(0)}
+                          </span>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-900 leading-tight">
+                          {user.first_name} {user.last_name}
+                        </p>
+                        <p className="text-xs text-slate-500 font-medium">{user.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                    <td className="px-6 py-4">
+                      <span className="rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-600">
+                        {user.role}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                          user.status === "ACTIVE"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                            : "bg-rose-50 text-rose-700 border border-rose-100"
+                        }`}
+                      >
+                        <span className={`h-1.5 w-1.5 rounded-full ${user.status === 'ACTIVE' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+                        {user.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-slate-500 text-xs font-medium">
+                      {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/admin/users/${user.id}/edit`}
+                          className="rounded-lg border border-slate-200 p-2 text-slate-400 transition hover:bg-white hover:text-indigo-600 hover:border-indigo-200"
+                        >
+                          <Edit3 className="h-4 w-4" />
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(user.id)}
+                          className="rounded-lg border border-slate-200 p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-
-      <AnimatePresence>
-        {editingUser && (
-          <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900"
-              initial={{ y: 40, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 40, opacity: 0 }}
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                  Edit User
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => setEditingUser(null)}
-                  className="text-sm text-slate-500"
-                >
-                  Close
-                </button>
-              </div>
-              <div className="mt-4 space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                <p>
-                  <span className="font-medium text-slate-900 dark:text-white">
-                    {editingUser.name}
-                  </span>{" "}
-                  — {editingUser.email}
-                </p>
-                <select
-                  value={editingUser.role}
-                  onChange={(event) =>
-                    setEditingUser({
-                      ...editingUser,
-                      role: event.target.value,
-                    })
-                  }
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm dark:border-slate-800 dark:bg-slate-950"
-                >
-                  {roles.map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={editingUser.status}
-                  onChange={(event) =>
-                    setEditingUser({
-                      ...editingUser,
-                      status: event.target.value,
-                    })
-                  }
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm dark:border-slate-800 dark:bg-slate-950"
-                >
-                  {statuses.map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="mt-5 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setEditingUser(null)}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-white dark:bg-white dark:text-slate-900"
-                >
-                  Save User
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

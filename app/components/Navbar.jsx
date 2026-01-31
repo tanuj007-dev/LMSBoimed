@@ -3,11 +3,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { ShoppingBag, Menu, X, User } from "lucide-react";
 import logo from "./assets/logo.png";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm transition-all duration-300">
@@ -29,22 +31,28 @@ export default function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
             {[
-              { name: "Home", href: "/", active: true },
+              { name: "Home", href: "/" },
               { name: "Clinical Research", href: "/clinical-research" },
               { name: "Corporate Training", href: "/corporate-training" },
-              { name: "Courses", href: "#" },
+              { name: "Courses", href: "/courses" },
               { name: "Blog", href: "/blogs" },
               { name: "Contact", href: "/contact" },
-            ].map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={`text-[15px] font-medium transition-colors duration-200 ${link.active ? "text-[#0088ff] font-semibold" : "text-gray-600 hover:text-[#0088ff]"
+            ].map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`text-[15px] font-medium transition-colors duration-200 ${
+                    isActive 
+                      ? "text-[#0088ff] font-semibold" 
+                      : "text-gray-600 hover:text-[#0088ff]"
                   }`}
-              >
-                {link.name}
-              </Link>
-            ))}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Right Section: Icons & Buttons */}
@@ -83,19 +91,26 @@ export default function Navbar() {
             { name: "Home", href: "/" },
             { name: "Clinical Research", href: "/clinical-research" },
             { name: "Corporate Training", href: "/corporate-training" },
-            { name: "Courses", href: "#" },
+            { name: "Courses", href: "/courses" },
             { name: "Blog", href: "/blogs" },
             { name: "Contact", href: "/contact" },
-          ].map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="text-gray-600 hover:text-[#0088ff] hover:bg-gray-50 px-4 py-2 rounded-lg font-medium transition-colors text-[15px]"
-              onClick={() => setIsOpen(false)}
-            >
-              {item.name}
-            </Link>
-          ))}
+          ].map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors text-[15px] ${
+                  isActive
+                    ? "text-[#0088ff] bg-blue-50 font-semibold"
+                    : "text-gray-600 hover:text-[#0088ff] hover:bg-gray-50"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
           <div className="border-t border-gray-100 my-2 pt-2 space-y-3">
             <Link
               href="/login"

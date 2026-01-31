@@ -1,6 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Clock, BookOpen, Users } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -26,6 +27,7 @@ const CourseCard = ({ title, code, oldPrice, newPrice, duration, lessons, studen
                     alt={title}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    unoptimized={typeof image === 'string'}
                 />
             </div>
 
@@ -65,9 +67,14 @@ const CourseCard = ({ title, code, oldPrice, newPrice, duration, lessons, studen
 
                 {/* Action Buttons */}
                 <div className="mt-auto flex items-center gap-3">
-                    <button className="flex-1 bg-[#0088ff] text-white py-2.5 rounded-full text-xs font-bold shadow-[0_8px_15px_rgba(0,136,255,0.25)] hover:bg-[#0077ee] transition-all hover:-translate-y-0.5 active:translate-y-0">
+                    <Link 
+                        href="https://academy-lms-exam.serverfacts.com/lms/Academy-LMS/home/courses"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 bg-[#0088ff] text-white py-2.5 rounded-full text-xs font-bold shadow-[0_8px_15px_rgba(0,136,255,0.25)] hover:bg-[#0077ee] transition-all hover:-translate-y-0.5 active:translate-y-0 text-center"
+                    >
                         Enroll Now
-                    </button>
+                    </Link>
                     <button className="flex-1 border border-[#0088ff] text-[#0088ff] py-2.5 rounded-full text-xs font-bold hover:bg-blue-50 transition-all text-center">
                         View Details
                     </button>
@@ -79,40 +86,71 @@ const CourseCard = ({ title, code, oldPrice, newPrice, duration, lessons, studen
 
 export default function FeaturedCourses() {
     const [activeTab, setActiveTab] = useState("clinical");
+    const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    
     const getTabIndex = (tab) => (tab === "clinical" ? 0 : tab === "biopharma" ? 1 : 2);
 
-    const courses = [
-        {
-            title: "Electrocardiography Techniques",
-            code: "EKG",
-            oldPrice: "CA$150",
-            newPrice: "CA$99.99",
-            duration: "90 Days",
-            lessons: "20 lessons",
-            students: "All Participant",
-            image: course1
-        },
-        {
-            title: "Phlebotomy Techniques",
-            code: "PH",
-            oldPrice: "CA$150",
-            newPrice: "CA$99.99",
-            duration: "90 Days",
-            lessons: "20 lessons",
-            students: "All Participant",
-            image: course2
-        },
-        {
-            title: "Comprehensive Health Assessment",
-            code: "HA",
-            oldPrice: "CA$150",
-            newPrice: "CA$99.99",
-            duration: "90 Days",
-            lessons: "20 lessons",
-            students: "All Participant",
-            image: course3
-        }
-    ];
+    // Fallback images for when API doesn't provide images
+    const fallbackImages = [course1, course2, course3];
+
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                
+                const response = await fetch('http://localhost:5000/api/v1/courses', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch courses: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('API Response:', data); // Debug log
+                
+                // Ensure we have an array to work with
+                let coursesArray = [];
+                if (Array.isArray(data)) {
+                    coursesArray = data;
+                } else if (data && Array.isArray(data.courses)) {
+                    coursesArray = data.courses;
+                } else if (data && Array.isArray(data.data)) {
+                    coursesArray = data.data;
+                } else {
+                    throw new Error('Invalid API response format - expected an array of courses');
+                }
+                
+                // Map API data to component format
+                const mappedCourses = coursesArray.map((course, index) => ({
+                    title: course.title || course.name || 'Untitled Course',
+                    code: course.code || course.courseCode || 'N/A',
+                    oldPrice: course.oldPrice || course.originalPrice || 'CA$150',
+                    newPrice: course.newPrice || course.price || 'CA$99.99',
+                    duration: course.duration || '90 Days',
+                    lessons: course.lessons || course.totalLessons || '20 lessons',
+                    students: course.students || course.enrolledStudents || 'All Participant',
+                    image: course.image || course.thumbnail || fallbackImages[index % fallbackImages.length],
+                    category: course.category || 'clinical'
+                }));
+
+                setCourses(mappedCourses);
+            } catch (err) {
+                console.error('Error fetching courses:', err);
+                setError(err.message);
+                setCourses([]); // Set empty array instead of fallback courses
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCourses();
+    }, []);
 
     return (
         <section className="relative w-full py-8 lg:py-14 bg-white overflow-hidden">
@@ -190,35 +228,70 @@ export default function FeaturedCourses() {
                     </div>
                 </motion.div>
 
+                {/* Loading State */}
+                {loading && (
+                    <div className="flex justify-center items-center py-20">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0088ff]"></div>
+                    </div>
+                )}
+
+                {/* Error State */}
+                {error && !loading && (
+                    <div className="text-center py-10">
+                        <div className="bg-red-50 border border-red-200 rounded-2xl p-6 max-w-md mx-auto">
+                            <p className="text-red-600 font-semibold mb-2">Failed to load courses</p>
+                            <p className="text-gray-600 text-sm">{error}</p>
+                            <button 
+                                onClick={() => window.location.reload()} 
+                                className="mt-4 px-4 py-2 bg-[#0088ff] text-white rounded-full text-sm font-semibold hover:bg-[#0077ee] transition-colors"
+                            >
+                                Retry
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 {/* Courses Grid */}
-                <AnimatePresence mode="wait">
-                    <motion.div 
-                        key={activeTab}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3, ease: "easeOut" }}
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-                    >
-                        {courses.map((course, index) => (
-                            <div key={index} className="relative">
-                                {index === 0 && (
-                                    <div className="pointer-events-none absolute -top-10 -left-8 w-24 h-24 opacity-70 hidden md:block">
-                                        <Image src={cardEdgeVector} alt="" fill className="object-contain" />
+                {!loading && (
+                    <AnimatePresence mode="wait">
+                        <motion.div 
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+                        >
+                            {courses
+                                .filter(course => !course.category || course.category === activeTab)
+                                .map((course, index) => (
+                                    <div key={course.code + index} className="relative">
+                                        {index === 0 && (
+                                            <div className="pointer-events-none absolute -top-10 -left-8 w-24 h-24 opacity-70 hidden md:block">
+                                                <Image src={cardEdgeVector} alt="" fill className="object-contain" />
+                                            </div>
+                                        )}
+                                        {index === 2 && (
+                                            <div className="pointer-events-none absolute -bottom-6 -right-8 w-24 h-24 opacity-70 rotate-180 hidden md:block">
+                                                <Image src={cardEdgeVector} alt="" fill className="object-contain" />
+                                            </div>
+                                        )}
+                                        <div className="relative z-10">
+                                            <CourseCard {...course} index={index} />
+                                        </div>
                                     </div>
-                                )}
-                                {index === 2 && (
-                                    <div className="pointer-events-none absolute -bottom-6 -right-8 w-24 h-24 opacity-70 rotate-180 hidden md:block">
-                                        <Image src={cardEdgeVector} alt="" fill className="object-contain" />
-                                    </div>
-                                )}
-                                <div className="relative z-10">
-                                    <CourseCard {...course} index={index} />
+                                ))
+                            }
+                            
+                            {/* No courses message */}
+                            {courses.filter(course => !course.category || course.category === activeTab).length === 0 && (
+                                <div className="col-span-full text-center py-10">
+                                    <p className="text-gray-500 text-lg">No courses available in this category yet.</p>
                                 </div>
-                            </div>
-                        ))}
-                    </motion.div>
-                </AnimatePresence>
+                            )}
+                        </motion.div>
+                    </AnimatePresence>
+                )}
 
             </div>
         </section>

@@ -7,7 +7,7 @@ import ClinicalResearchHero from "../components/ClinicalResearchHero";
 const ClinicalResearchCommitment = dynamic(() => import("../components/ClinicalResearchCommitment"), { ssr: true });
 const TherapeuticAreas = dynamic(() => import("../components/TherapeuticAreas"), { ssr: true });
 const ClinicalResearchGallery = dynamic(() => import("../components/ClinicalResearchGallery"), { ssr: true });
-const ClinicalResearchCTA = dynamic(() => import("../components/ClinicalResearchCTA"), { ssr: true });
+// const ClinicalResearchCTA = dynamic(() => import("../components/ClinicalResearchCTA"), { ssr: true });
 
 export default function ClinicalResearchPage() {
   return (
@@ -16,7 +16,7 @@ export default function ClinicalResearchPage() {
       <ClinicalResearchCommitment />
       <TherapeuticAreas />
       <ClinicalResearchGallery />
-      <ClinicalResearchCTA />
+      {/* <ClinicalResearchCTA /> */}
     </main>
   );
 }

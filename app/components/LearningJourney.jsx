@@ -67,7 +67,7 @@ const LearningJourney = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-2xl md:text-4xl lg:text-5xl font-playfair font-bold text-white mb-3 tracking-tight leading-[1.1]"
             >
-              Let Us Manage Your Clinical Trials
+              Start Your Learning Journey Today
             </motion.h2>
 
             <motion.p 
@@ -77,7 +77,7 @@ const LearningJourney = () => {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="text-white text-sm md:text-base lg:text-lg mb-6 max-w-2xl font-light leading-relaxed"
             >
-              Join BioMed Canada's site management organization to deliver quality jobs.
+             Join BioMed Canada’s online learning community and gain skills that create impact.
             </motion.p>
 
             <motion.button 
@@ -87,7 +87,7 @@ const LearningJourney = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="bg-[#c21d24] text-white px-10 py-3 rounded-full font-medium text-sm md:text-base hover:bg-[#a3181d] transition-all duration-300 shadow-lg mb-8 md:mb-10 transform hover:-translate-y-0.5"
             >
-              Explore Our Services
+              Explore Our Courses
             </motion.button>
 
             {/* Divider Line */}

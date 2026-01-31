@@ -23,16 +23,23 @@ import logo from "../components/assets/logo.png";
 import doctorImg from "../components/assets/38fa7cda-e83d-4252-8f82-c0945dac1c79.png";
 
 const countries = [
-  { name: "Canada", code: "+1", countryCode: "CA", id: "CA" },
-  { name: "United States", code: "+1", countryCode: "US", id: "US" },
-  { name: "United Kingdom", code: "+44", countryCode: "GB", id: "GB" },
-  { name: "Australia", code: "+61", countryCode: "AU", id: "AU" },
-  { name: "India", code: "+91", countryCode: "IN", id: "IN" },
-  { name: "Germany", code: "+49", countryCode: "DE", id: "DE" },
-  { name: "France", code: "+33", countryCode: "FR", id: "FR" },
-  { name: "United Arab Emirates", code: "+971", countryCode: "AE", id: "AE" },
-  { name: "Singapore", code: "+65", countryCode: "SG", id: "SG" },
-  { name: "Japan", code: "+81", countryCode: "JP", id: "JP" },
+  { name: "Canada", code: "+1", countryCode: "CA" },
+  { name: "United States", code: "+1", countryCode: "US" },
+  { name: "United Kingdom", code: "+44", countryCode: "GB" },
+  { name: "Australia", code: "+61", countryCode: "AU" },
+  { name: "India", code: "+91", countryCode: "IN" },
+  { name: "Germany", code: "+49", countryCode: "DE" },
+  { name: "France", code: "+33", countryCode: "FR" },
+  { name: "United Arab Emirates", code: "+971", countryCode: "AE" },
+  { name: "Singapore", code: "+65", countryCode: "SG" },
+  { name: "Japan", code: "+81", countryCode: "JP" },
+  { name: "Malaysia", code: "+60", countryCode: "MY" },
+  { name: "Philippines", code: "+63", countryCode: "PH" },
+  { name: "China", code: "+86", countryCode: "CN" },
+  { name: "South Korea", code: "+82", countryCode: "KR" },
+  { name: "Thailand", code: "+66", countryCode: "TH" },
+  { name: "Indonesia", code: "+62", countryCode: "ID" },
+  { name: "Vietnam", code: "+84", countryCode: "VN" },
 ];
 
 const ContactPage = () => {
@@ -78,7 +85,7 @@ const ContactPage = () => {
             >
               <span>BioMed Canada</span>
               <span className="w-1 h-1 rounded-full bg-gray-300" />
-              <span className="text-[#0088ff]">Get in touch</span>
+              <span className="text-[#0088ff]">Get in t ouch</span>
             </motion.div>
             
             <motion.h1 
@@ -135,22 +142,22 @@ const ContactPage = () => {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="relative flex border border-gray-300 rounded-2xl overflow-hidden focus-within:border-gray-400 transition-all">
+                    <div className="relative flex border border-gray-300 rounded-2xl focus-within:border-gray-400 transition-all">
                       <div className="relative" ref={dropdownRef}>
                         <button 
                           type="button"
                           onClick={() => setIsCountryOpen(!isCountryOpen)}
-                          className="h-full px-4 border-r border-gray-200 flex items-center gap-2 hover:bg-gray-50 transition-all"
+                          className="h-full px-4 border-r border-gray-200 flex items-center gap-2 hover:bg-gray-50 transition-all rounded-l-2xl"
                         >
                           <ReactCountryFlag 
                             countryCode={selectedCountry.countryCode} 
                             svg 
                             style={{ width: '1.4em', height: '1.4em' }} 
                           />
-                          <div className="flex flex-col gap-0.5">
-                            <ChevronDown size={10} className="text-gray-400 rotate-180" />
-                            <ChevronDown size={10} className="text-gray-400" />
-                          </div>
+                          <ChevronDown 
+                            size={14} 
+                            className={`text-gray-400 transition-transform duration-300 ${isCountryOpen ? 'rotate-180' : ''}`} 
+                          />
                         </button>
 
                         <AnimatePresence>
@@ -178,7 +185,7 @@ const ContactPage = () => {
                                 {filteredCountries.length > 0 ? (
                                   filteredCountries.map((country) => (
                                     <button
-                                      key={country.id}
+                                      key={country.countryCode}
                                       type="button"
                                       onClick={(e) => {
                                         e.stopPropagation();
@@ -195,7 +202,7 @@ const ContactPage = () => {
                                           <p className="text-[11px] text-gray-400">{country.code}</p>
                                         </div>
                                       </div>
-                                      {selectedCountry.id === country.id && (
+                                      {selectedCountry.countryCode === country.countryCode && (
                                         <Check size={14} className="text-[#0088ff]" />
                                       )}
                                     </button>

@@ -9,15 +9,16 @@ const ThemeContext = createContext({
 });
 
 export function ThemeProvider({ children }) {
-  const [isDark, setIsDark] = useState(false);
+  // Theme is strictly light as per user request
+  const isDark = false;
 
   const value = useMemo(
     () => ({
       isDark,
-      toggleTheme: () => setIsDark((prev) => !prev),
-      setTheme: (next) => setIsDark(Boolean(next)),
+      toggleTheme: () => {},
+      setTheme: () => {},
     }),
-    [isDark]
+    []
   );
 
   return (
